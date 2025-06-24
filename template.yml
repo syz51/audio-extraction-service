@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Audio extraction service with AWS Lambda Web Adapter and SQS integration
+
+Globals:
+  Function:
+    Timeout: 300
+    MemorySize: 512
+
+Resources:
+  AudioExtractionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: audio-extraction-service-dev
+      PackageType: Image
+      Role: arn:aws:iam::617768147523:role/audio-extraction-lambda-execution-dev
+      Environment:
+        Variables:
+          AWS_LWA_READINESS_CHECK_PROTOCOL: tcp
+          RUST_LOG: info
+          ENVIRONMENT: production
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: arn:aws:sqs:eu-west-2:617768147523:audio-extraction-video-processing-dev
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./service
+      DockerTag: v1
