@@ -26,7 +26,6 @@ def create_app() -> FastAPI:
     # Initialize FastAPI app
     app = FastAPI(
         lifespan=lifespan,
-        redirect_slashes=False,
     )
 
     # Include API routers
