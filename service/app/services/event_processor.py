@@ -2,7 +2,10 @@
 Event processing service containing business logic for SQS event handling.
 """
 
+import json
 from typing import List
+
+from fastapi.encoders import jsonable_encoder
 
 from app.schemas.events import EventProcessingResponse, ProcessedRecord
 from app.schemas.sqs import SQSEvent, SQSRecord
@@ -60,12 +63,10 @@ class EventProcessorService:
             ProcessedRecord: Processing result for the record
         """
         logger.info(f"Processing message ID: {record.messageId}")
-        logger.debug(f"Message body: {record.body}")
-        logger.debug(f"Source ARN: {record.eventSourceARN}")
-        logger.debug(f"Region: {record.awsRegion}")
 
         # TODO: Add your actual audio processing logic here
         # For now, we'll just simulate processing
+        logger.info(json.dumps(jsonable_encoder(record), indent=4))
         await self._simulate_audio_processing(record.body)
 
         return ProcessedRecord(

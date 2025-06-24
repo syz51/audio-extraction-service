@@ -9,5 +9,3 @@ class HealthCheckResponse(BaseModel):
     """Health check response model."""
 
     status: str
-    version: str
-    environment: str

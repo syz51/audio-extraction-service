@@ -34,16 +34,6 @@ def setup_logging() -> None:
         # Prevent propagation to root logger to avoid duplicates
         app_logger.propagate = False
 
-    # Configure uvicorn loggers for different environments
-    if settings.environment == "production":
-        # Reduce noise in production
-        logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-        logging.getLogger("uvicorn.error").setLevel(logging.INFO)
-    else:
-        # More verbose logging in development
-        logging.getLogger("uvicorn.access").setLevel(logging.INFO)
-        logging.getLogger("uvicorn.error").setLevel(logging.DEBUG)
-
 
 def get_logger(name: str) -> logging.Logger:
     """Get a logger instance with the given name under the app namespace."""
@@ -62,7 +52,6 @@ def log_event_processing(
     log_data = {
         "event_type": event_type,
         "record_count": record_count,
-        "environment": settings.environment,
     }
 
     if additional_info:

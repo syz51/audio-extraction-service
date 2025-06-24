@@ -6,8 +6,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.v1.router import api_v1_router
-from app.core.config import settings
+from app.api.router import api_router
 from app.utils.logging import setup_logging
 
 
@@ -26,15 +25,12 @@ def create_app() -> FastAPI:
 
     # Initialize FastAPI app
     app = FastAPI(
-        title=settings.app_name,
-        version=settings.app_version,
-        debug=settings.debug,
         lifespan=lifespan,
         redirect_slashes=False,
     )
 
     # Include API routers
-    app.include_router(api_v1_router)
+    app.include_router(api_router)
 
     return app
 
