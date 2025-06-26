@@ -5,8 +5,9 @@ description = "Audio extraction service with AWS Lambda Web Adapter and SQS inte
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "fastapi>=0.115.13",
+    "fastapi>=0.115.14",
     "fastapi-cli>=0.0.7",
+    "ffmpeg-python>=0.2.0",
     "pydantic-settings>=2.10.1",
     "uvicorn[standard]>=0.34.3",
 ]

@@ -3,6 +3,7 @@ Event processing service containing business logic for SQS event handling.
 """
 
 import json
+import subprocess
 from typing import List
 
 from app.schemas.events import EventProcessingResponse, ProcessedRecord
@@ -28,6 +29,23 @@ class EventProcessorService:
         """
 
         logger.info(f"Received {len(event.Records)} SQS records for processing")
+
+        try:
+            result = subprocess.run(
+                ["ffmpeg", "-version"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=10,
+            )
+            if result.returncode != 0:
+                raise RuntimeError("FFmpeg command failed")
+            logger.info(f"Local FFmpeg verified successfully: {result.stdout}")
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            raise RuntimeError(
+                "FFmpeg not found in PATH. Please install FFmpeg or use container mode."
+            )
 
         processed_records: List[ProcessedRecord] = []
 
@@ -132,7 +150,7 @@ class EventProcessorService:
             logger.info(f"Non-audio file, skipping: {object_key}")
 
     async def _handle_audio_file_created(
-        self, bucket_name: str, object_key: str, s3_record
+        self, bucket_name: str, object_key: str, s3_record: S3EventRecord
     ) -> None:
         """
         Handle audio file creation events.
@@ -153,15 +171,6 @@ class EventProcessorService:
         # 5. Generate transcripts
         # 6. Upload processed files back to S3
         # 7. Store metadata in a database
-
-        # Example S3 URL construction
-        s3_url = f"s3://{bucket_name}/{object_key}"
-        https_url = (
-            f"https://{bucket_name}.s3.{s3_record.awsRegion}.amazonaws.com/{object_key}"
-        )
-
-        logger.info(f"S3 URL: {s3_url}")
-        logger.info(f"HTTPS URL: {https_url}")
 
         # Simulate processing
         await self._simulate_audio_processing(object_key)
