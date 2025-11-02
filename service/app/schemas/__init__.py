@@ -12,7 +12,6 @@ from .s3_events import (
     S3Bucket,
     S3TestEvent,
     S3EventTypes,
-    is_audio_file,
 )
 from .sqs import SQSEvent, SQSRecord, SQSAttributes
 
@@ -30,7 +29,6 @@ __all__ = [
     "S3Bucket",
     "S3TestEvent",
     "S3EventTypes",
-    "is_audio_file",
     # SQS schemas
     "SQSEvent",
     "SQSRecord",

@@ -444,4 +444,90 @@ For questions and support:
 
 ---
 
-**Note**: This service currently includes a simulation of audio processing logic. Replace the `_simulate_audio_processing` method in `EventProcessorService` with your actual audio extraction implementation. 
+**Note**: This service currently includes a simulation of audio processing logic. Replace the `_simulate_audio_processing` method in `EventProcessorService` with your actual audio extraction implementation.
+
+## Windows Compatibility
+
+This service is designed to work on both Unix and Windows platforms. The main challenge on Windows is subprocess creation for FFmpeg operations, which requires specific event loop configuration.
+
+### Windows Subprocess Support
+
+On Windows, asyncio subprocess creation requires the `ProactorEventLoop`. This service automatically configures the correct event loop policy on startup:
+
+- **Automatic Detection**: The service detects Windows platform and sets `WindowsProactorEventLoopPolicy`
+- **Cross-Platform Code**: Unix systems continue to use the standard `SelectorEventLoop`
+- **Subprocess Wrapper**: All subprocess calls use a compatibility wrapper that handles platform differences
+
+### Testing Windows Compatibility
+
+You can test Windows subprocess compatibility using the built-in test endpoint:
+
+```bash
+# Start the service
+uvicorn app.main:app --reload
+
+# Test subprocess compatibility (especially useful on Windows)
+curl http://localhost:8000/health/subprocess-test
+```
+
+The test endpoint will verify:
+
+- Basic command execution
+- FFprobe availability
+- FFmpeg availability
+- Event loop policy configuration
+
+### Manual Testing
+
+You can also run the subprocess test directly:
+
+```bash
+cd service
+python -m app.utils.subprocess_test
+```
+
+### Configuration
+
+The service includes Windows-specific configuration options:
+
+- `temp_dir_path`: Automatically uses Windows-appropriate temporary directories
+- `is_windows`: Platform detection flag
+- `USE_WINDOWS_SUBPROCESS_WORKAROUND`: Automatically enabled on Windows
+
+### Development on Windows
+
+When developing on Windows:
+
+1. Ensure FFmpeg and FFprobe are available in your PATH
+2. The service will automatically configure the correct event loop policy
+3. Use the subprocess test endpoint to verify everything is working
+4. Check logs for any event loop warnings
+
+## Development
+
+### Prerequisites
+
+- Python 3.13+
+- FFmpeg (must be available in PATH)
+- AWS credentials (for S3 operations)
+
+### Installation
+
+```bash
+cd service
+uv sync
+```
+
+### Running
+
+```bash
+cd service
+fastapi dev app/main.py
+```
+
+### Testing
+
+```bash
+cd service
+pytest
+``` 

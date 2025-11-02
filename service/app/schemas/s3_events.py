@@ -215,25 +215,3 @@ class S3EventTypes:
 
     # Test event
     TEST_EVENT = "s3:TestEvent"
-
-
-# Utility function to determine if this is an audio file based on key
-def is_audio_file(object_key: str) -> bool:
-    """Check if the S3 object is likely an audio file based on its extension."""
-    audio_extensions = {
-        ".mp3",
-        ".wav",
-        ".flac",
-        ".aac",
-        ".ogg",
-        ".m4a",
-        ".wma",
-        ".opus",
-        ".mp4",
-        ".m4v",
-        ".avi",
-        ".mov",
-        ".mkv",
-        ".webm",
-    }
-    return any(object_key.lower().endswith(ext) for ext in audio_extensions)
